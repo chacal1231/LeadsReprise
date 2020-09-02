@@ -72,7 +72,6 @@ foreach ($QueryFormularios as $RowFormularios => $FormsDownload) {
 	}
 }
 /*Inserto todo a la DB*/
-$EstadoCargaLead = 0;
 foreach ($Formularios as $InsertArray) {
 	foreach ($InsertArray['Leads'] as $LeadsArray) {
 		if(strtotime($LeadsArray['FechaRegistro'])>=strtotime($FechaFiltro)){

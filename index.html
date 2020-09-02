@@ -359,17 +359,79 @@
 		});
 	}
 	/*Procesar Errores*/
-	$('#HistorialTabla').on('click', '.Pago', function () {
+	$('#HistorialTabla').on('click', '.ErrorDescarga', function () {
+		const swalWithBootstrapButtons = Swal.mixin({
+			customClass: {
+				confirmButton: 'btn btn-success',
+				cancelButton: 'btn btn-danger'
+			},
+			buttonsStyling: false
+		})
+
+		swalWithBootstrapButtons.fire({
+			title: '¿Está seguro?',
+			text: "¿Desea volver a intentar la descarga?",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: '¡Re-intentar!',
+			cancelButtonText: '¡No!',
+			reverseButtons: true
+		}).then((result) => {
+			if (result.value) {
+				data = table.row($(this).closest('tr')).data();
+				/*Consulto la fecha del último pago*/
+				$.ajax({
+					type:'POST',
+					url:'Api/Descargar.php',
+					data:{'Proceso':'Descargar','Data': data},
+					dataType: 'json',
+					success:function(Response){
+						if(Response.Estado=="OK"){
+							Swal.fire({
+								icon: 'success',
+								title: '¡Exito!',
+								text: '¡Se descargó correctamente la información del formulario!'
+							})
+						}else{
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops...',
+								text: Response.Error
+							})
+						}
+					}
+				});
+			} else if (
+				/* Read more about handling dismissals below */
+				result.dismiss === Swal.DismissReason.cancel
+				) {
+				swalWithBootstrapButtons.fire(
+					'Cancelado',
+					'No se hizo la carga',
+					'error'
+					)
+			}
+		})
+	});
+	/*Procesar Errores*/
+	$('#HistorialTabla').on('click', '.ErrorCarga', function () {
 		data = table.row($(this).closest('tr')).data();
-		console.log(data);
-		/*Consulto la fecha del último pago*/
+		Swal.fire({
+			title: 'Leads sin cargar',
+			html: '<table id="HistorialPagos" class="table table-striped table-bordered"><thead><th>Fecha</th><th>IdLead</th><th>Acción</th></thead><tbody></tbody></table>',
+			customClass: 'swal2-overflow',
+		})
+		/*Lleno la tabla*/
 		$.ajax({
 			type:'GET',
-			url:'Api/ConsultarPagos.php',
-			data:{'IdCliente': data.IdCliente},
+			url:'Api/LeadsSinCargar.php',
+			data:{'Data': data},
 			dataType: 'json',
 			success:function(Response){
-				$('#UltimoPago').html(Response.FechaUltimoPago);
+				console.log(Response);
+				Response.Data.forEach(function(Value) {
+					$('#HistorialPagos tbody').append('<tr><td>'+Value.FechaRegistro+'</td><td>'+Value.IdLead+'</td><td><button class="btn btn-sm btn-success" type="button"><span class="fa fa-arrow-up fa-lg" onclick="Cargar('+Value.IdLead+')" aria-hidden="true"></span></button></td></tr>');
+				});
 			}
 		});
 	});
@@ -385,7 +447,7 @@
 					$.ajax({
 						type:'POST',
 						url:'Api/ActualizarToken.php',
-						data:{'Token': Token},
+						data:{'Token': $('#Token').val()},
 						dataType: 'json',
 						success:function(Response){
 							Swal.close();
@@ -402,7 +464,6 @@
 									text: Response.Error
 								})
 							}
-
 						}
 					});
 				}else{
@@ -457,6 +518,31 @@
 						text: "¡Los campos no deben estar vacios!"
 					})
 				}
+			}
+		});
+	}
+	function Cargar(IdLead){
+		$.ajax({
+			type:'POST',
+			url:'Api/CargarLeads.php',
+			data:{'IdLead': IdLead},
+			dataType: 'json',
+			success:function(Response){
+				console.log(Response);
+				if(Response.Estado=="OK"){
+					Swal.fire({
+						icon: 'success',
+						title: '¡Exito!',
+						text: '¡Se cargó correctamente el lead al CRM!'
+					})
+				}else{
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: Response.Error
+					})
+				}
+
 			}
 		});
 	}
