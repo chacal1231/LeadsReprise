@@ -338,9 +338,11 @@
 										<thead>
 											<tr>
 												<th>Formulario</th>
-												<th>Estado</th>
+												<th>Estado Descarga</th>
+												<th>Estado Carga</th>
 												<th>Error</th>
-												<th>Fecha</th>
+												<th>Fecha descarga</th>
+												<th>Fecha consulta</th>
 											</tr>
 										</thead>
 									</table>
@@ -452,9 +454,11 @@
 		"sAjaxSource": "Api/TablaErrores.php",
 		"aoColumns": [
 		{ mData: 'IdFormulario' },
-		{ mData: 'Estado' },
+		{ mData: 'EstadoDescarga' },
+		{ mData: 'EstadoCarga' },
 		{ mData: 'Error' },
-		{ mData: 'Fecha' }
+		{ mData: 'FechaCarga' },
+		{ mData: 'FechaConsulta' }
 		],
 	});
 	function Exportar(){
@@ -474,4 +478,19 @@
 			}
 		});
 	}
+	/*Procesar Errores*/
+	$('#HistorialTabla').on('click', '.Pago', function () {
+		data = table.row($(this).closest('tr')).data();
+		console.log(data);
+		/*Consulto la fecha del último pago*/
+		$.ajax({
+			type:'GET',
+			url:'Api/ConsultarPagos.php',
+			data:{'IdCliente': data.IdCliente},
+			dataType: 'json',
+			success:function(Response){
+				$('#UltimoPago').html(Response.FechaUltimoPago);
+			}
+		});
+});
 </script>

@@ -48,22 +48,68 @@ class SugarCRM{
         return $result;
     }
     /*Enviar data*/
-    public function sendDataCRM(){
+    public function sendDataCRM($Nombres,$Apellidos,$Telefono1,$Telefono2,$Programa,$TipoPrograma,$Correo,$Ciudad){
         $logIn = $this->logInCRM();
         $sessId = $logIn->id;
-
         $entryArgs = array(
- //Session id - retrieved from login call
             'session' => $sessId,
             'module_name' => 'Leads',
-            'select_fields' => array('first_name','last_name'),
+            'name_value_list' => array(
+                array(
+                    "name" => "first_name",
+                    "value" => $Nombres
+                ),
+                array(
+                    "name" => "last_name",
+                    "value" => $Apellidos
+                ),
+                array(
+                    "name" => "phone_mobile",
+                    "value" => $Telefono1
+                ),
+                array(
+                    "name" => "phone_other",
+                    "value" => $Telefono2
+                ),
+                array(
+                    "name" => "lead_source",
+                    "value" => "Facebook"
+                ),
+                array(
+                    "name" => "lead_source_description",
+                    "value" => "Facebook_API_JDMV"
+                ),  
+                array(
+                    "name" => "status",
+                    "value" => "No Gestionado"
+                ),
+                array(
+                    "name" => "d_programa_interes_c",
+                    "value" => $Programa
+                ),
+                array(
+                    "name" => "d_agno_periodo_c",
+                    "value" => "2020-1"
+                ),
+                array(
+                    "name" => "d_tipo_programa_c",
+                    "value" => $TipoPrograma
+                ),
+                array(
+                    "name" => "description",
+                    "value" => "prueba lead desde facebook"
+                ),
+                array(
+                    "name" => "email1",
+                    "value" => $Correo
+                ),
+                array(
+                    "name" => "d_ciudad_c",
+                    "value" => $Ciudad
+                ),
+            ),
         );
-
-        $rps = $this->restRequest($this->url,'get_entry_list',$entryArgs);
+        $rps = $this->restRequest($this->url,'set_entry',$entryArgs);
         return $rps;
     }
 }
-
-
-$CRM = new SugarCRM();
-print_r(json_encode($CRM->sendDataCRM()));
