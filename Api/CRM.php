@@ -112,4 +112,16 @@ class SugarCRM{
         $rps = $this->restRequest($this->url,'set_entry',$entryArgs);
         return $rps;
     }
+    public function GetDataCRM(){
+        $logIn = $this->logInCRM();
+        $sessId = $logIn->id;
+        $entryArgs = array(
+            'session' => $sessId,
+            'module_name' => 'Leads',
+            'related_module_query' => "lead_source_description='Facebook_API_JDMV'",
+            
+        );
+        $rps = $this->restRequest($this->url,'get_entry_list',$entryArgs);
+        return $rps;
+    }
 }

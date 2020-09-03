@@ -5,7 +5,7 @@ ini_set('max_execution_time', 0);
 ini_set('memory_limit', '-1');
 date_default_timezone_set('America/Bogota');
 /*Incluyo conexión a DB*/
-include '../inc/conn.php';
+include '../Inc/conn.php';
 /*CRM*/
 include 'CRM.php';
 if(isset($_POST['IdLead'])){

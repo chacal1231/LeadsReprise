@@ -5,7 +5,7 @@ ini_set('max_execution_time', 0);
 ini_set('memory_limit', '-1');
 date_default_timezone_set('America/Bogota');
 /*Incluyo conexión a DB*/
-include '../inc/conn.php';
+include '../Inc/conn.php';
 /*CRM*/
 include 'CRM.php';
 $CRM = new SugarCRM();
@@ -20,6 +20,25 @@ $d = DateTime::createFromFormat(
 );
 if ($d === false) {
 	die("Incorrect date string");
+}
+function VerificarCiudad($Ciudad){
+	$retorno = $ciudad;
+	$a = array("Ã¡", "á", "ÃƒÂ¡", "Á");
+	$retorno = str_replace($a, "A", $retorno);
+	$e = array("é", "É");
+	$retorno = str_replace($e, "E", $retorno);
+	$i = array("í","Í", "ÃƒÂ-", "Ã-");
+	$retorno = str_replace($i, "I", $retorno);
+	$o = array("ó", "Ó", "Ã³", "ÃƒÂ³");
+	$retorno = str_replace($o, "O", $retorno);
+	$u = array("ú", "Ú");
+	$retorno = str_replace($u, "U", $retorno);
+	$n = array("ñ", "Ñ", "Ã±");
+	$retorno = str_replace($n, "N", $retorno);
+	$retorno = strtoupper ( $retorno );
+	$retornoFuncion = preg_replace("/[^A-Za-z0-9?!]/",'',$retorno);
+	return $retornoFuncion;
+
 }
 /*Token de accesos*/
 $QueryToken = $link->query("SELECT * FROM facebook");
@@ -81,7 +100,7 @@ foreach ($Formularios as $InsertArray) {
 				$Telefono2="0";
 			}
 			/*Cargo*/
-			$ResponseCRM = $CRM->sendDataCRM($LeadsArray['Nombres'],$LeadsArray['Apellidos'],$LeadsArray['Telefono1'],$Telefono2,$InsertArray['NombreFormulario'],$InsertArray['TipoPrograma'],$LeadsArray['Correo'],$LeadsArray['Ciudad']);
+			$ResponseCRM = $CRM->sendDataCRM($LeadsArray['Nombres'],$LeadsArray['Apellidos'],$LeadsArray['Telefono1'],$Telefono2,$InsertArray['NombreFormulario'],$InsertArray['TipoPrograma'],$LeadsArray['Correo'],VerificarCiudad($LeadsArray['Ciudad']));
 			if($ResponseCRM->id){
 				$EstadoCargaLead = "OK";
 				$link->query("UPDATE registro_carga SET EstadoCarga='OK' WHERE IdFormulario='".$InsertArray['IdFormulario']."' AND FechaConsulta='".$FechaFiltro."'");

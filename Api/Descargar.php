@@ -89,7 +89,5 @@ if(isset($_POST['Proceso'])){
 			/*Hubo un error y lo reporto*/
 			echo json_encode(array('Estado'=>'ERROR'));
 		}
-	}elseif($Proceso=="Cargar"){
-
 	}
 }

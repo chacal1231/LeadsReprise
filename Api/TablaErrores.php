@@ -2,8 +2,6 @@
 include '../Inc/conn.php';
 header('Content-type: application/json');
 header('Access-Control-Allow-Origin: *');
-/*Inicio la sesion*/
-session_start();
 /*Ganancia tabla*/
 $QueryErroresTabla = $link->query("SELECT * FROM registro_carga");
 $RowErroresTabla = $QueryErroresTabla->fetch_array();
